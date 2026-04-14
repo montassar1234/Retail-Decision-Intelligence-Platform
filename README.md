@@ -1,5 +1,7 @@
 # Retail Decision Intelligence Platform
 
+Retail Decision Intelligence Platform is a BI + AI project that turns retail transaction data into a decision-support system. It combines dashboards, KPI tracking, sales forecasting, anomaly detection, customer and product segmentation, and business recommendations to support smarter retail decisions.
+
 This repository contains a reworked **BI + AI retail analytics solution** built to feel closer to a professional BI delivery than a classroom prototype. The project combines:
 
 - a **BI semantic layer** with fact and dimension outputs
