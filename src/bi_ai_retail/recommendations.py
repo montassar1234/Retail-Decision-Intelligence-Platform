@@ -40,13 +40,13 @@ def build_recommendations(
             }
         )
 
-    low_margin_category = category_performance.sort_values(["profit_margin_pct", "revenue"], ascending=[True, False]).iloc[0]
+    lowest_review_category = category_performance.sort_values(["avg_review_score", "revenue"], ascending=[True, False]).iloc[0]
     recommendations.append(
         {
             "priority": "Medium",
-            "theme": "Pricing",
-            "recommendation": f"Review discounting and supplier cost structure for {low_margin_category['Category']} to lift margin quality.",
-            "evidence": f"{low_margin_category['Category']} delivers only {low_margin_category['profit_margin_pct']:.1f}% margin.",
+            "theme": "Customer Experience",
+            "recommendation": f"Review product quality and fulfilment experience for {lowest_review_category['Category']} items.",
+            "evidence": f"{lowest_review_category['Category']} has the weakest average review score at {lowest_review_category['avg_review_score']:.2f}.",
         }
     )
 
@@ -57,7 +57,7 @@ def build_recommendations(
                 "priority": "Medium",
                 "theme": "Portfolio",
                 "recommendation": "Rationalise low-performing SKUs through bundling, promotion, or discontinuation review.",
-                "evidence": f"Representative at-risk products include {', '.join(at_risk['Description'].tolist())}.",
+                "evidence": f"Representative at-risk product IDs include {', '.join(at_risk['product_id'].astype(str).tolist())}.",
             }
         )
 
@@ -77,8 +77,8 @@ def build_recommendations(
         {
             "priority": "Low",
             "theme": "Expansion",
-            "recommendation": f"Use {top_country['Country']} as the benchmark market for assortment and service-level planning.",
-            "evidence": f"It is the largest market by revenue at ${top_country['revenue']:,.0f}.",
+            "recommendation": f"Use {top_country['Country']} as the benchmark geography for assortment and service-level planning.",
+            "evidence": f"It is the largest geography by revenue at ${top_country['revenue']:,.0f}.",
         }
     )
 

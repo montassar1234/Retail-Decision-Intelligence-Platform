@@ -1,78 +1,94 @@
 # Retail Decision Intelligence Platform
 
-Retail Decision Intelligence Platform is a BI + AI project that transforms retail transaction data into an interactive decision-support system. It combines business intelligence reporting with machine learning to monitor performance, forecast sales, detect anomalies, segment customers and products, and generate actionable recommendations.
+Retail Decision Intelligence Platform is a BI + AI project that transforms retail e-commerce data into an interactive decision-support system. It combines business intelligence reporting with machine learning to monitor performance, forecast sales, detect anomalies, segment customers and products, and generate actionable recommendations.
 
 ## Project Overview
 
-This project was developed as an academic BI + AI solution using open-source retail data. The objective is to move beyond static reporting by combining descriptive analytics and predictive analytics in one platform.
+This project was developed as an academic BI + AI solution using the Olist e-commerce dataset. The objective is to combine descriptive analytics and predictive analytics in one platform so that business performance can be monitored and future-oriented decisions can be supported with data.
 
-The system helps answer questions such as:
+The platform helps answer questions such as:
 
-- What are the main revenue and profit drivers?
-- Which countries and product categories perform best?
+- Which product categories and states generate the most revenue?
+- How do delivery performance and customer reviews affect business quality?
 - What sales level can be expected in the next 30 days?
 - Which unusual sales patterns should be investigated?
-- Which customers and products need strategic attention?
+- Which customers and products require strategic attention?
 
 ## Objectives
 
-- Prepare and clean retail transaction data for analysis
-- Build key business indicators for performance monitoring
+- Prepare and clean e-commerce transaction data for analysis
+- Build business KPIs for revenue, orders, reviews, and delivery performance
 - Forecast future sales using machine learning
-- Detect anomalies in historical sales behavior
+- Detect anomalies in sales behavior
 - Segment customers and products for decision support
-- Deliver an interactive dashboard for analysis and presentation
+- Demonstrate advanced preprocessing techniques such as scaling, feature fusion, noise removal, and PCA
+- Deliver an interactive dashboard for academic presentation
 
 ## Dataset
 
-- Source: [Online Retail dataset](https://raw.githubusercontent.com/dbdmg/data-science-lab/master/datasets/online_retail.csv)
-- Type: transactional e-commerce retail data
-- Period covered: `2010-12-01` to `2011-12-09`
+- Source: [Olist merged e-commerce dataset](https://huggingface.co/datasets/abhimlv/Olist-preprocessed-data-merged/resolve/main/orders_final_merged_prepro_and_feature_engg.csv)
+- Type: Brazilian e-commerce transactional dataset
+- Period covered: `2016-10-03` to `2018-08-29`
 
-The dataset includes invoice information, product descriptions, quantities, unit prices, customer identifiers, and country information.
+The dataset includes order, payment, review, customer, seller, freight, and product-related features.
 
 ## Methodology
 
 ### 1. Data Preparation
 
-The raw dataset was cleaned by:
+The preprocessing stage includes:
 
-- removing duplicates
-- excluding invalid transactions
-- converting date fields
-- creating calculated fields such as revenue, estimated cost, profit, and profit margin
-- deriving business dimensions such as category, region, month, and day of week
+- type conversion for date, numeric, and categorical fields
+- missing-value treatment with median and default-category imputation
+- duplicate detection and removal
+- IQR-based noise filtering on key numerical variables
+- feature fusion and derived variables
+- MinMax scaling
+- Standard scaling
+- PCA-based dimension reduction
 
-### 2. Business Intelligence Layer
+### 2. Feature Engineering
+
+Examples of engineered features include:
+
+- `product_volume_cm3`
+- `product_density_g_cm3`
+- `freight_per_weight`
+- `payment_per_installment`
+- `review_text_length`
+- `approval_lag_hours`
+- `delivery_delay_days`
+- `price_to_freight_ratio`
+
+### 3. Business Intelligence Layer
 
 The BI component provides:
 
-- revenue, profit, and margin KPIs
-- average order value and repeat customer rate
-- country and regional performance analysis
-- category and product performance analysis
-- monthly and weekday trend monitoring
+- revenue and order KPIs
+- average review and late-delivery indicators
+- state and regional performance analysis
+- category performance analysis
+- trend monitoring over time
 
-### 3. Artificial Intelligence Layer
+### 4. Artificial Intelligence Layer
 
 The AI component includes:
 
-- sales forecasting using a machine learning regression model
-- anomaly detection for unusual spikes and drops in sales
-- customer segmentation using RFM analysis
+- daily sales forecasting using machine learning
+- anomaly detection for unusual revenue patterns
+- customer segmentation using RFM logic
 - product segmentation using clustering
-- recommendation logic based on analytical findings
+- recommendation logic based on analytical outputs
 
-### 4. Dashboard
+### 5. Dashboard
 
-The final dashboard was developed with Streamlit and includes:
+The dashboard was developed with Streamlit and includes:
 
-- executive overview
-- commercial performance analysis
-- forecasting and anomaly views
-- customer and product segment insights
-- filter-driven reporting
-- interactive world map selection
+- executive BI overview
+- data preparation and preprocessing analysis
+- forecasting and anomaly detection views
+- customer and product segmentation views
+- recommendation panel
 
 ## Tools and Technologies
 
@@ -123,39 +139,62 @@ py -3.14 -m streamlit run app.py
 
 The project generates:
 
-- cleaned and transformed retail data
+- cleaned analytical dataset
 - KPI summaries
 - forecast results
-- anomaly detection outputs
-- customer and product segmentation outputs
+- anomaly outputs
+- customer and product segments
+- preprocessing outputs for scaling and PCA
 - business recommendations
-- dashboard views for analysis and presentation
+
+Additional preprocessing files include:
+
+- `missing_value_report.csv`
+- `scaler_summary.csv`
+- `minmax_scaled_features.csv`
+- `standard_scaled_features.csv`
+- `pca_projection.csv`
+- `preprocessing_summary.json`
 
 ## Results Summary
 
-- Revenue analysed: `$10.64M`
-- Profit analysed: `$3.41M`
-- Gross margin: `32.0%`
-- Orders analysed: `19,960`
-- Customers analysed: `4,339`
-- Countries analysed: `38`
-- Repeat customer rate: `65.6%`
-- Forecasted revenue for the next 30 days: `$1.16M`
-- Detected anomaly days: `11`
+- Revenue analysed: `$11.46M`
+- Profit analysed: `$2.26M`
+- Gross margin: `19.7%`
+- Orders analysed: `80,168`
+- Customers analysed: `77,775`
+- States analysed: `27`
+- Repeat customer rate: `2.8%`
+- Forecasted revenue for the next 30 days: `$463,643`
+- Detected anomaly days: `20`
+- Rows after cleaning: `95,351`
+- Noisy rows removed: `17,839`
+
+## Recommendation Logic
+
+The recommendation module is rule-based. It uses results from forecasting, anomaly detection, category analysis, customer segmentation, product segmentation, and geography performance to generate business actions such as:
+
+- inventory adjustment
+- operations investigation
+- customer experience improvement
+- product portfolio review
+- customer retention actions
+- geography benchmarking
 
 ## Academic Value
 
 This project demonstrates practical skills in:
 
-- data cleaning and transformation
+- data cleaning and preprocessing
+- feature engineering
 - KPI design
 - business intelligence reporting
 - machine learning for forecasting
 - anomaly detection
-- segmentation
+- customer and product segmentation
 - dashboard development
 - business-oriented data storytelling
 
 ## Conclusion
 
-Retail Decision Intelligence Platform shows how BI and AI can be combined in a realistic retail use case. The BI component explains what has happened in the business, while the AI component provides predictive and analytical support for future decisions.
+Retail Decision Intelligence Platform shows how BI and AI can be combined in a realistic e-commerce use case. The BI component explains what has happened in the business, while the AI component provides predictive and analytical support for decision-making.
