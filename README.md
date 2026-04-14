@@ -1,80 +1,105 @@
 # Retail Decision Intelligence Platform
 
-Retail Decision Intelligence Platform is a BI + AI project that turns retail transaction data into a decision-support system. It combines dashboards, KPI tracking, sales forecasting, anomaly detection, customer and product segmentation, and business recommendations to support smarter retail decisions.
+Retail Decision Intelligence Platform is a BI + AI project that transforms retail transaction data into an interactive decision-support system. It combines business intelligence reporting with machine learning to monitor performance, forecast sales, detect anomalies, segment customers and products, and generate actionable recommendations.
 
-This repository contains a reworked **BI + AI retail analytics solution** built to feel closer to a professional BI delivery than a classroom prototype. The project combines:
+## Project Overview
 
-- a **BI semantic layer** with fact and dimension outputs
-- an **executive dashboard** for performance monitoring and drill-down analysis
-- an **AI layer** for forecasting, anomaly detection, segmentation, and action recommendations
+This project was developed as an academic BI + AI solution using open-source retail data. The objective is to move beyond static reporting by combining descriptive analytics and predictive analytics in one platform.
 
-## Business goal
+The system helps answer questions such as:
 
-Retail teams need more than historical reporting. They need a decision-support platform that can answer:
+- What are the main revenue and profit drivers?
+- Which countries and product categories perform best?
+- What sales level can be expected in the next 30 days?
+- Which unusual sales patterns should be investigated?
+- Which customers and products need strategic attention?
 
-- Which markets, categories, and products drive value?
-- Where is margin quality weakening?
-- Which customers are loyal, promising, or at risk?
-- What demand should we expect next month?
-- Which abnormal sales patterns need investigation?
+## Objectives
 
-## Senior-level project upgrades
-
-This reworked version adds a stronger BI backbone:
-
-- order-level and line-level fact outputs
-- date, customer, and product dimensions
-- customer RFM segmentation
-- product ABC classification
-- richer KPI set including margin, repeat rate, forecast delta, and forecast accuracy proxy
-- executive dashboard filters for region, category, and country
+- Prepare and clean retail transaction data for analysis
+- Build key business indicators for performance monitoring
+- Forecast future sales using machine learning
+- Detect anomalies in historical sales behavior
+- Segment customers and products for decision support
+- Deliver an interactive dashboard for analysis and presentation
 
 ## Dataset
 
 - Source: [Online Retail dataset](https://raw.githubusercontent.com/dbdmg/data-science-lab/master/datasets/online_retail.csv)
-- Period covered: `2010-12-01` to `2011-12-09`
 - Type: transactional e-commerce retail data
+- Period covered: `2010-12-01` to `2011-12-09`
 
-## Architecture
+The dataset includes invoice information, product descriptions, quantities, unit prices, customer identifiers, and country information.
 
-### Data and semantic layer
+## Methodology
 
-- `fact_sales.csv`
-- `fact_orders.csv`
-- `dim_date.csv`
-- `dim_customer.csv`
-- `dim_product.csv`
+### 1. Data Preparation
 
-### BI outputs
+The raw dataset was cleaned by:
 
-- executive KPI summary
-- market and category performance tables
-- weekday and monthly performance
-- top-product tables
-- customer and product segment summaries
+- removing duplicates
+- excluding invalid transactions
+- converting date fields
+- creating calculated fields such as revenue, estimated cost, profit, and profit margin
+- deriving business dimensions such as category, region, month, and day of week
 
-### AI outputs
+### 2. Business Intelligence Layer
 
-- daily revenue forecasting
-- anomaly detection on sales behavior
-- product clustering
-- recommendation engine
+The BI component provides:
 
-## Repository structure
+- revenue, profit, and margin KPIs
+- average order value and repeat customer rate
+- country and regional performance analysis
+- category and product performance analysis
+- monthly and weekday trend monitoring
+
+### 3. Artificial Intelligence Layer
+
+The AI component includes:
+
+- sales forecasting using a machine learning regression model
+- anomaly detection for unusual spikes and drops in sales
+- customer segmentation using RFM analysis
+- product segmentation using clustering
+- recommendation logic based on analytical findings
+
+### 4. Dashboard
+
+The final dashboard was developed with Streamlit and includes:
+
+- executive overview
+- commercial performance analysis
+- forecasting and anomaly views
+- customer and product segment insights
+- filter-driven reporting
+- interactive world map selection
+
+## Tools and Technologies
+
+- Python
+- Pandas
+- NumPy
+- scikit-learn
+- Plotly
+- Streamlit
+- Joblib
+- python-pptx
+
+## Project Structure
 
 ```text
-BI+AI Project/
+Retail-Decision-Intelligence-Platform/
 |-- app.py
 |-- main.py
 |-- requirements.txt
-|-- data/
-|-- models/
+|-- dashboard/
+|-- notebooks/
 |-- presentation/
 |-- reports/
 `-- src/bi_ai_retail/
 ```
 
-## How to run
+## How to Run
 
 Install dependencies:
 
@@ -82,7 +107,7 @@ Install dependencies:
 py -3.14 -m pip install -r requirements.txt
 ```
 
-Build or refresh outputs:
+Run the data pipeline:
 
 ```powershell
 py -3.14 main.py
@@ -94,50 +119,43 @@ Launch the dashboard:
 py -3.14 -m streamlit run app.py
 ```
 
-## Main generated outputs
+## Main Outputs
 
-All outputs are written to `data/processed/`.
+The project generates:
 
-Key files include:
+- cleaned and transformed retail data
+- KPI summaries
+- forecast results
+- anomaly detection outputs
+- customer and product segmentation outputs
+- business recommendations
+- dashboard views for analysis and presentation
 
-- `kpis.json`
-- `model_metrics.json`
-- `order_summary.csv`
-- `customer_summary.csv`
-- `daily_sales.csv`
-- `product_segments.csv`
-- `customer_segment_summary.csv`
-- `recommendations.csv`
-- `fact_sales.csv`
-- `fact_orders.csv`
-- `dim_date.csv`
-- `dim_customer.csv`
-- `dim_product.csv`
+## Results Summary
 
-## Current headline results
-
-- Revenue: `$10.64M`
-- Profit: `$3.41M`
+- Revenue analysed: `$10.64M`
+- Profit analysed: `$3.41M`
 - Gross margin: `32.0%`
-- Orders: `19,960`
-- Customers: `4,339`
+- Orders analysed: `19,960`
+- Customers analysed: `4,339`
+- Countries analysed: `38`
 - Repeat customer rate: `65.6%`
-- Forecast next 30 days: `$1.16M`
-- Anomaly days detected: `11`
+- Forecasted revenue for the next 30 days: `$1.16M`
+- Detected anomaly days: `11`
 
-## Why this is strong for BI + AI
+## Academic Value
 
-This project demonstrates:
+This project demonstrates practical skills in:
 
-- data engineering and semantic modeling
-- KPI design for decision-making
-- interactive BI dashboard development
-- predictive analytics
+- data cleaning and transformation
+- KPI design
+- business intelligence reporting
+- machine learning for forecasting
 - anomaly detection
-- customer and product segmentation
-- business recommendation logic
+- segmentation
+- dashboard development
+- business-oriented data storytelling
 
-## Presentation summary
+## Conclusion
 
-> This project delivers a retail decision-intelligence platform that combines BI reporting with AI-driven forecasting and pattern detection.  
-> It supports executives, analysts, and operations teams with a shared view of performance, risk, and next-step actions.
+Retail Decision Intelligence Platform shows how BI and AI can be combined in a realistic retail use case. The BI component explains what has happened in the business, while the AI component provides predictive and analytical support for future decisions.
