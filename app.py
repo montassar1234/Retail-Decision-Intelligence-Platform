@@ -97,6 +97,7 @@ def build_filtered_views(clean_retail: pd.DataFrame, region_filter: list[str], c
             revenue=("payment_value", "sum"),
             product_value=("price", "sum"),
             avg_review_score=("review_score", "mean"),
+            is_late=("is_late", "max"),
         )
         .reset_index()
     )
@@ -126,11 +127,11 @@ with st.sidebar:
 filtered_sales, filtered_orders = build_filtered_views(clean_retail, region_filter, category_filter, state_filter)
 
 metric_cols = st.columns(6)
-metric_cols[0].metric("Revenue", format_money(filtered_sales["payment_value"].sum()))
+metric_cols[0].metric("Revenue", format_money(filtered_orders["revenue"].sum()))
 metric_cols[1].metric("Orders", f"{filtered_orders['order_id'].nunique():,}")
 metric_cols[2].metric("Customers", f"{filtered_sales['customer_unique_id'].nunique():,}")
 metric_cols[3].metric("Avg Review", f"{filtered_sales['review_score'].mean():.2f}")
-metric_cols[4].metric("Late Orders", f"{filtered_sales['is_late'].mean() * 100:.1f}%")
+metric_cols[4].metric("Late Orders", f"{filtered_orders['is_late'].mean() * 100:.1f}%")
 metric_cols[5].metric("Next 30 Days", format_money(kpis["forecast_30d_revenue"]))
 
 tab1, tab2, tab3, tab4, tab5 = st.tabs(["Executive BI", "Data Preparation", "Forecasting", "Segmentation", "Recommendations"])

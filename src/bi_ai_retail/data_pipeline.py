@@ -73,8 +73,44 @@ def load_raw_olist() -> pd.DataFrame:
     return pd.read_csv(RAW_DATA_PATH, low_memory=False)
 
 
-def impute_and_engineer(raw_df: pd.DataFrame) -> tuple[pd.DataFrame, dict[str, object], pd.DataFrame, pd.DataFrame]:
-    df = raw_df.copy()
+def collapse_order_item_payment_duplicates(raw_df: pd.DataFrame) -> tuple[pd.DataFrame, int]:
+    item_keys = ["order_id", "order_item_id", "product_id", "seller_id"]
+    payment_keys = ["order_id", "payment_sequential", "payment_type", "payment_installments", "payment_value"]
+
+    item_frame = (
+        raw_df.sort_values(item_keys + ["payment_sequential"], kind="stable")
+        .drop_duplicates(subset=item_keys, keep="first")
+        .copy()
+    )
+    payment_totals = (
+        raw_df[payment_keys]
+        .drop_duplicates()
+        .groupby("order_id", as_index=False)["payment_value"]
+        .sum()
+        .rename(columns={"payment_value": "order_payment_total"})
+    )
+
+    item_frame["price"] = pd.to_numeric(item_frame["price"], errors="coerce")
+    item_frame["freight_value"] = pd.to_numeric(item_frame["freight_value"], errors="coerce")
+    item_frame["total_order_value"] = pd.to_numeric(item_frame["total_order_value"], errors="coerce")
+    item_frame["item_total_value"] = item_frame["total_order_value"].fillna(item_frame["price"].fillna(0) + item_frame["freight_value"].fillna(0))
+    item_frame["item_total_value"] = item_frame["item_total_value"].where(item_frame["item_total_value"] > 0, item_frame["price"].fillna(0) + item_frame["freight_value"].fillna(0))
+
+    item_frame = item_frame.merge(payment_totals, on="order_id", how="left")
+    order_item_totals = item_frame.groupby("order_id")["item_total_value"].transform("sum").replace(0, np.nan)
+    payment_share = item_frame["item_total_value"] / order_item_totals
+    item_frame["payment_value"] = (item_frame["order_payment_total"] * payment_share).fillna(item_frame["item_total_value"])
+    item_frame["total_order_value"] = item_frame["item_total_value"]
+    item_frame = item_frame.drop(columns=["order_payment_total", "item_total_value"])
+
+    collapsed_rows = int(len(raw_df) - len(item_frame))
+    return item_frame, collapsed_rows
+
+
+def impute_and_engineer(
+    raw_df: pd.DataFrame,
+) -> tuple[pd.DataFrame, dict[str, object], pd.DataFrame, pd.DataFrame, pd.DataFrame, pd.DataFrame, pd.DataFrame]:
+    df, payment_join_rows_removed = collapse_order_item_payment_duplicates(raw_df)
 
     datetime_columns = [
         "shipping_limit_date",
@@ -222,9 +258,12 @@ def impute_and_engineer(raw_df: pd.DataFrame) -> tuple[pd.DataFrame, dict[str, o
     preprocessing_summary = {
         "dataset_name": "Olist merged e-commerce dataset",
         "rows_before_cleaning": int(len(raw_df)),
+        "rows_after_order_item_normalisation": int(len(raw_df) - payment_join_rows_removed),
         "rows_after_deduplication_and_cleaning": int(len(df)),
         "duplicate_rows_removed": duplicate_rows_removed,
+        "payment_join_rows_removed": payment_join_rows_removed,
         "noisy_rows_removed": noisy_rows_removed,
+        "canonical_grain": "One row per order item after collapsing duplicated payment joins.",
         "features_for_scaling": scaled_features,
         "feature_fusion_examples": [
             "product_volume_cm3",
@@ -336,17 +375,12 @@ def build_product_segments(clean_df: pd.DataFrame) -> pd.DataFrame:
             active_months=("order_month", "nunique"),
         )
         .reset_index()
-        .rename(columns={"product_id": "product_id", "category": "Category"})
+        .rename(columns={"category": "Category"})
     )
     product_frame["avg_monthly_revenue"] = product_frame["total_revenue"] / product_frame["active_months"]
-    product_frame = product_frame.merge(variability.rename(columns={"product_id": "product_id", "category": "Category"}), on=["product_id", "Category"], how="left")
+    product_frame = product_frame.merge(variability.rename(columns={"category": "Category"}), on=["product_id", "Category"], how="left")
     product_frame["revenue_volatility"] = product_frame["revenue_volatility"].fillna(0)
-    product_frame["Description"] = product_frame["product_id"]
-    segmented = segment_products(product_frame.rename(columns={"product_id": "StockCode"}))
-    segmented = segmented.rename(columns={"StockCode": "product_id"})
-    if "Description" in segmented.columns:
-        segmented = segmented.drop(columns=["Description"])
-    return segmented
+    return segment_products(product_frame)
 
 
 def build_aggregates(clean_df: pd.DataFrame, order_summary: pd.DataFrame, customer_summary: pd.DataFrame, product_segments: pd.DataFrame) -> dict[str, pd.DataFrame]:
@@ -530,7 +564,7 @@ def run_pipeline() -> dict[str, object]:
         product_segments=product_segments,
         category_performance=aggregates["category_performance"],
         customer_segments=aggregates["customer_segment_summary"],
-        country_performance=aggregates["state_performance"].rename(columns={"state": "Country"}),
+        geography_performance=aggregates["state_performance"],
     )
     semantic_outputs = build_semantic_outputs(clean_df, order_summary, customer_summary, product_segments)
 

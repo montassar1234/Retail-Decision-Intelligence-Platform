@@ -11,7 +11,7 @@ def build_recommendations(
     product_segments: pd.DataFrame,
     category_performance: pd.DataFrame,
     customer_segments: pd.DataFrame,
-    country_performance: pd.DataFrame,
+    geography_performance: pd.DataFrame,
 ) -> pd.DataFrame:
     recommendations: list[dict[str, str]] = []
 
@@ -40,7 +40,9 @@ def build_recommendations(
             }
         )
 
-    lowest_review_category = category_performance.sort_values(["avg_review_score", "revenue"], ascending=[True, False]).iloc[0]
+    stable_categories = category_performance[category_performance["orders"] >= 50].copy()
+    review_scope = stable_categories if not stable_categories.empty else category_performance
+    lowest_review_category = review_scope.sort_values(["avg_review_score", "revenue"], ascending=[True, False]).iloc[0]
     recommendations.append(
         {
             "priority": "Medium",
@@ -72,13 +74,13 @@ def build_recommendations(
             }
         )
 
-    top_country = country_performance.sort_values("revenue", ascending=False).iloc[0]
+    top_geography = geography_performance.sort_values("revenue", ascending=False).iloc[0]
     recommendations.append(
         {
             "priority": "Low",
             "theme": "Expansion",
-            "recommendation": f"Use {top_country['Country']} as the benchmark geography for assortment and service-level planning.",
-            "evidence": f"It is the largest geography by revenue at ${top_country['revenue']:,.0f}.",
+            "recommendation": f"Use {top_geography['state']} as the benchmark state for assortment and service-level planning.",
+            "evidence": f"It is the largest state by revenue at ${top_geography['revenue']:,.0f}.",
         }
     )
 

@@ -12,12 +12,12 @@ def save_json(path: Path, payload: dict) -> None:
 
 def build_markdown_report(path: Path, summary: dict, model_metrics: dict, recommendations: pd.DataFrame) -> None:
     lines = [
-        "# Smart Retail Demand & Decision Intelligence",
+        "# Retail Decision Intelligence Platform",
         "",
         "## Executive Summary",
         f"- Total revenue: ${summary['total_revenue']:,.2f}",
-        f"- Total profit: ${summary['total_profit']:,.2f}",
-        f"- Gross margin: {summary['gross_margin_pct']:.2f}%",
+        f"- Estimated profit: ${summary['total_profit']:,.2f}",
+        f"- Estimated gross margin: {summary['gross_margin_pct']:.2f}%",
         f"- Orders analysed: {summary['orders_count']:,}",
         f"- Customers analysed: {summary['customers_count']:,}",
         f"- Repeat customer rate: {summary['repeat_customer_rate']:.1f}%",

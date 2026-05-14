@@ -6,6 +6,8 @@ __pycache__/
 
 streamlit.out.log
 streamlit.err.log
+streamlit-launch.out.log
+streamlit-launch.err.log
 
 data/raw/
 data/processed/

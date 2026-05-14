@@ -1,200 +1,194 @@
 # Retail Decision Intelligence Platform
 
-Retail Decision Intelligence Platform is a BI + AI project that transforms retail e-commerce data into an interactive decision-support system. It combines business intelligence reporting with machine learning to monitor performance, forecast sales, detect anomalies, segment customers and products, and generate actionable recommendations.
+Retail Decision Intelligence Platform is a BI + AI academic project built on the Olist Brazilian e-commerce dataset. It combines data preparation, KPI reporting, forecasting, anomaly detection, customer segmentation, product segmentation, and recommendation generation inside one Streamlit dashboard.
 
-## Project Overview
+## What The Project Does
 
-This project was developed as an academic BI + AI solution using the Olist e-commerce dataset. The objective is to combine descriptive analytics and predictive analytics in one platform so that business performance can be monitored and future-oriented decisions can be supported with data.
+The project answers practical retail questions such as:
 
-The platform helps answer questions such as:
+- Which states and product categories generate the most revenue?
+- How do delivery quality and review scores affect performance?
+- What revenue can be expected over the next 30 days?
+- Which dates show abnormal sales behavior?
+- Which customers and products need management attention?
 
-- Which product categories and states generate the most revenue?
-- How do delivery performance and customer reviews affect business quality?
-- What sales level can be expected in the next 30 days?
-- Which unusual sales patterns should be investigated?
-- Which customers and products require strategic attention?
+## Core Business Value
 
-## Objectives
+- BI layer: explains what happened in the business
+- AI layer: estimates what may happen next and where management should act
+- Decision layer: converts analytics into clear operational recommendations
 
-- Prepare and clean e-commerce transaction data for analysis
-- Build business KPIs for revenue, orders, reviews, and delivery performance
-- Forecast future sales using machine learning
-- Detect anomalies in sales behavior
-- Segment customers and products for decision support
-- Demonstrate advanced preprocessing techniques such as scaling, feature fusion, noise removal, and PCA
-- Deliver an interactive dashboard for academic presentation
+## Important Data Modeling Note
 
-## Dataset
+The source file is a merged transactional dataset. In that merged table, some order items are repeated across payment rows. The pipeline now normalises the data to a canonical grain of **one row per order item** before KPI calculation.
 
-- Source: [Olist merged e-commerce dataset](https://huggingface.co/datasets/abhimlv/Olist-preprocessed-data-merged/resolve/main/orders_final_merged_prepro_and_feature_engg.csv)
-- Type: Brazilian e-commerce transactional dataset
-- Period covered: `2016-10-03` to `2018-08-29`
+Why this matters:
 
-The dataset includes order, payment, review, customer, seller, freight, and product-related features.
+- It prevents double-counting of item value and revenue
+- It keeps product and category analysis consistent
+- It makes order-level and item-level summaries defensible during presentation
 
-## Methodology
+Payment totals are reconstructed at order level and then allocated back to item rows proportionally to item value so that:
 
-### 1. Data Preparation
+- item-level analysis remains possible
+- order revenue still matches the payment totals
+- the dashboard uses one coherent revenue definition
 
-The preprocessing stage includes:
-
-- type conversion for date, numeric, and categorical fields
-- missing-value treatment with median and default-category imputation
-- duplicate detection and removal
-- IQR-based noise filtering on key numerical variables
-- feature fusion and derived variables
-- MinMax scaling
-- Standard scaling
-- PCA-based dimension reduction
-
-### 2. Feature Engineering
-
-Examples of engineered features include:
-
-- `product_volume_cm3`
-- `product_density_g_cm3`
-- `freight_per_weight`
-- `payment_per_installment`
-- `review_text_length`
-- `approval_lag_hours`
-- `delivery_delay_days`
-- `price_to_freight_ratio`
-
-### 3. Business Intelligence Layer
-
-The BI component provides:
-
-- revenue and order KPIs
-- average review and late-delivery indicators
-- state and regional performance analysis
-- category performance analysis
-- trend monitoring over time
-
-### 4. Artificial Intelligence Layer
-
-The AI component includes:
-
-- daily sales forecasting using machine learning
-- anomaly detection for unusual revenue patterns
-- customer segmentation using RFM logic
-- product segmentation using clustering
-- recommendation logic based on analytical outputs
-
-### 5. Dashboard
-
-The dashboard was developed with Streamlit and includes:
-
-- executive BI overview
-- data preparation and preprocessing analysis
-- forecasting and anomaly detection views
-- customer and product segmentation views
-- recommendation panel
-
-## Tools and Technologies
-
-- Python
-- Pandas
-- NumPy
-- scikit-learn
-- Plotly
-- Streamlit
-- Joblib
-- python-pptx
-
-## Project Structure
+## Project Architecture
 
 ```text
-Retail-Decision-Intelligence-Platform/
+BI+AI Project/
 |-- app.py
 |-- main.py
+|-- README.md
+|-- PROJECT_PRESENTATION_GUIDE.md
 |-- requirements.txt
-|-- dashboard/
-|-- notebooks/
-|-- presentation/
+|-- data/
+|   |-- raw/
+|   `-- processed/
+|-- models/
 |-- reports/
-`-- src/bi_ai_retail/
+`-- src/
+    `-- bi_ai_retail/
+        |-- config.py
+        |-- data_pipeline.py
+        |-- modeling.py
+        |-- recommendations.py
+        `-- reporting.py
 ```
 
-## How to Run
+## Pipeline Stages
+
+### 1. Data Ingestion
+
+- reads the merged Olist dataset
+- creates required folders automatically
+- downloads the dataset if it is missing
+
+### 2. Grain Normalisation
+
+- collapses duplicated joins caused by payment records
+- keeps one canonical row per order item
+- rebuilds valid item-level revenue values from order payments
+
+### 3. Cleaning And Feature Engineering
+
+- converts text, numeric, and datetime columns
+- imputes missing values
+- removes exact duplicates
+- removes outliers with an IQR rule
+- creates derived features such as delivery delay, freight per weight, and product density
+- applies MinMax scaling, Standard scaling, and PCA
+
+### 4. BI Summaries
+
+- order summary
+- daily sales summary
+- customer RFM summary
+- product performance summary
+- state and category performance tables
+
+### 5. AI Models
+
+- Gradient Boosting daily revenue forecast
+- Isolation Forest anomaly detection
+- KMeans product clustering
+
+### 6. Recommendation Engine
+
+- translates outputs into management actions for operations, portfolio, retention, and customer experience
+
+## Main Methods Used
+
+- `Pandas` for transformation and aggregation
+- `NumPy` for numerical logic
+- `scikit-learn` for forecasting, clustering, anomaly detection, scaling, and PCA
+- `Plotly` for interactive visuals
+- `Streamlit` for the dashboard interface
+- `joblib` for model export
+
+## Current Outputs
+
+The pipeline currently produces:
+
+- cleaned retail table
+- order summary
+- customer summary
+- daily sales table
+- future forecast
+- forecast validation table
+- anomaly table
+- product segments
+- customer segment summary
+- state and category performance tables
+- scaling and PCA outputs
+- KPI JSON files
+- project summary report
+
+## Current Result Snapshot
+
+These values come from the latest regenerated outputs in `data/processed`:
+
+- Total revenue: `$9.46M`
+- Estimated profit: `$2.22M`
+- Estimated gross margin: `23.49%`
+- Orders analysed: `80,520`
+- Customers analysed: `78,096`
+- States analysed: `27`
+- Repeat customer rate: `2.8%`
+- Forecasted next 30 days revenue: `$363,053`
+- Forecast accuracy proxy: `82.31%`
+- Detected anomaly days: `19`
+- Rows after cleaning: `92,047`
+
+## Assumptions You Should Mention In Presentation
+
+These are not weaknesses if you explain them clearly:
+
+- Profit is **estimated**, not observed directly
+- Estimated cost is derived from product value using a fixed ratio
+- Forecasting uses historical daily patterns and engineered lag features
+- Product segmentation labels are business-friendly names mapped from KMeans clusters
+- Revenue is normalised to item grain after resolving duplicated payment joins
+
+## Limitations
+
+- The project uses one dataset and one time period only
+- Forecasting is based on historical behavior and does not include promotions or seasonality calendars outside the observed data
+- Profit is estimated because supplier cost is not available in the dataset
+- Recommendations are rule-based, not generated by a reinforcement or causal model
+
+## How To Run
 
 Install dependencies:
 
 ```powershell
-py -3.14 -m pip install -r requirements.txt
+py -3 -m pip install -r requirements.txt
 ```
 
-Run the data pipeline:
+Run the pipeline:
 
 ```powershell
-py -3.14 main.py
+py -3 main.py
 ```
 
 Launch the dashboard:
 
 ```powershell
-py -3.14 -m streamlit run app.py
+py -3 -m streamlit run app.py
 ```
 
-## Main Outputs
+## Suggested Presentation Flow
 
-The project generates:
+1. Start with the business problem: retail teams need both monitoring and forward-looking support.
+2. Explain the dataset and the grain-normalisation step.
+3. Walk through preprocessing and engineered features.
+4. Show the BI dashboard tabs.
+5. Explain the forecast, anomalies, customer segmentation, and product segmentation.
+6. End with the recommendation engine and managerial actions.
 
-- cleaned analytical dataset
-- KPI summaries
-- forecast results
-- anomaly outputs
-- customer and product segments
-- preprocessing outputs for scaling and PCA
-- business recommendations
+## Presentation Support File
 
-Additional preprocessing files include:
+For a function-by-function and code-block explanation, use:
 
-- `missing_value_report.csv`
-- `scaler_summary.csv`
-- `minmax_scaled_features.csv`
-- `standard_scaled_features.csv`
-- `pca_projection.csv`
-- `preprocessing_summary.json`
-
-## Results Summary
-
-- Revenue analysed: `$11.46M`
-- Profit analysed: `$2.26M`
-- Gross margin: `19.7%`
-- Orders analysed: `80,168`
-- Customers analysed: `77,775`
-- States analysed: `27`
-- Repeat customer rate: `2.8%`
-- Forecasted revenue for the next 30 days: `$463,643`
-- Detected anomaly days: `20`
-- Rows after cleaning: `95,351`
-- Noisy rows removed: `17,839`
-
-## Recommendation Logic
-
-The recommendation module is rule-based. It uses results from forecasting, anomaly detection, category analysis, customer segmentation, product segmentation, and geography performance to generate business actions such as:
-
-- inventory adjustment
-- operations investigation
-- customer experience improvement
-- product portfolio review
-- customer retention actions
-- geography benchmarking
-
-## Academic Value
-
-This project demonstrates practical skills in:
-
-- data cleaning and preprocessing
-- feature engineering
-- KPI design
-- business intelligence reporting
-- machine learning for forecasting
-- anomaly detection
-- customer and product segmentation
-- dashboard development
-- business-oriented data storytelling
-
-## Conclusion
-
-Retail Decision Intelligence Platform shows how BI and AI can be combined in a realistic e-commerce use case. The BI component explains what has happened in the business, while the AI component provides predictive and analytical support for decision-making.
+- [PROJECT_PRESENTATION_GUIDE.md](C:\Users\a\Desktop\BI+AI Project\PROJECT_PRESENTATION_GUIDE.md)
